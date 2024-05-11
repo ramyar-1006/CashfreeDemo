@@ -133,8 +133,8 @@ def place_order():
         "accept": "application/json",
         "content-type": "application/json",
         "x-api-version": "2023-08-01",
-        "x-client-id": "TEST10105718bac7268d5bae63601ff381750101",
-        "x-client-secret": "cfsk_ma_test_b1286fdd1c3908218a0f171b98be1642_8d03e7af"
+        "x-client-id": "<x-client-id>",
+        "x-client-secret": "<x-client-secret>"
     }
     data = {
         "customer_details": {
