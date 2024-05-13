@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 import requests
 import uuid
 
@@ -127,14 +127,16 @@ def place_order():
     print (order_id)'''
 
     order_id = str(uuid.uuid4())
+    return_url = url_for('thank_you', order_id=order_id, _external=True)
+
     
     url = "https://sandbox.cashfree.com/pg/orders"
     headers = {
         "accept": "application/json",
         "content-type": "application/json",
         "x-api-version": "2023-08-01",
-        "x-client-id": "<x-client-id>",
-        "x-client-secret": "<x-client-secret>"
+        "x-client-id": "TEST10105718bac7268d5bae63601ff381750101",
+        "x-client-secret": "cfsk_ma_test_b1286fdd1c3908218a0f171b98be1642_8d03e7af"
     }
     data = {
         "customer_details": {
@@ -148,7 +150,7 @@ def place_order():
         "order_id": order_id,
      
         "order_meta": {
-            "return_url": f"http://127.0.0.1:5000?order_id={order_id}"
+            "return_url": f"http://127.0.0.1:5000/thank_you?order_id={order_id}"
         }
     }
     
@@ -168,9 +170,68 @@ def place_order():
                                order_id=order_id)
     else:
         return f'Error: {response.status_code}, {response.text}'
+@app.route('/thank_you')
+def thank_you():
+    order_id = request.args.get('order_id')
+    customer_id = request.args.get('customer_id')
+    customer_phone = request.args.get('customer_phone')
+    customer_email = request.args.get('customer_email')
+    customer_name = request.args.get('customer_name')
+    order_amount = request.args.get('order_amount')
+    order_currency = request.args.get('order_currency')
     
-    
+    return f'''
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            color: #800080; /* Purple */
+        }}
+        .container {{
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }}
+        h1 {{
+            text-align: center;
+        }}
+        p {{
+            text-align: center;
+            font-size: 18px;
+        }}
+        .order-details {{
+            margin-top: 20px;
+        }}
+        .order-details p {{
+            font-size: 16px;
+            margin: 5px;
+        }}
+        .order-details p strong {{
+            color: #000;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thank You!</h1>
+        <p>Your Order Has been placed</p>
+        <p>Your order ID Is: <strong>{order_id}</strong></p>
+    </div>
+</body>
+</html>
+    '''
+   
 
 if __name__ == '__main__':
     app.run(debug=True)
-
